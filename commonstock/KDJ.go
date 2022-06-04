@@ -98,7 +98,7 @@ func (e *KDJ) calculationKD(records []*commonmodels.Kline) (rsv, k, d []float64)
 		// 2: Calculate average.
 		// 3: Remove first value.
 
-		if e.Period == len(periodLowArr) {
+		if len(periodLowArr) > 1 {
 			lowest := e.arrayLowest(periodLowArr)
 			highest := e.arrayHighest(periodHighArr)
 			//logger.Infoln(i, records[i].Close, lowest, highest)
@@ -113,11 +113,13 @@ func (e *KDJ) calculationKD(records []*commonmodels.Kline) (rsv, k, d []float64)
 			k[i] = (2.0/3)*k[i-1] + 1.0/3*rsv[i]
 			d[i] = (2.0/3)*d[i-1] + 1.0/3*k[i]
 			// remove first value in array.
-			periodLowArr = periodLowArr[1:]
-			periodHighArr = periodHighArr[1:]
+			if e.Period == len(periodLowArr) {
+				periodLowArr = periodLowArr[1:]
+				periodHighArr = periodHighArr[1:]
+			}
 		} else {
-			k[i] = 50
-			d[i] = 50
+			k[i] = 100
+			d[i] = 100
 			rsv[i] = 0
 		}
 	}
